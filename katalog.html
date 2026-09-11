@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeMartyr Store — Katalog Akun Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0b0b0d;
+    --surface:#17161a;
+    --surface-2:#1f1d22;
+    --line:#2b282e;
+    --blood:#c81e3a;
+    --ember:#ff4655;
+    --text:#f5f4f6;
+    --muted:#a8a7ad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3,.display{
+    font-family:'Rajdhani',sans-serif;
+    font-weight:700;
+    letter-spacing:0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+
+  /* ===== NAV ===== */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 6vw;
+    position:sticky;top:0;z-index:50;
+    background:rgba(11,11,13,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.4rem;}
+  .brand span{color:var(--ember);}
+  .nav-cta{
+    background:var(--ember);color:#0b0b0d;
+    padding:9px 18px;border-radius:2px;
+    font-weight:600;font-size:0.9rem;
+  }
+
+  /* ===== BANNER CAROUSEL ===== */
+  .carousel{
+    position:relative;
+    width:100%;
+    height:min(52vw, 420px);
+    min-height:220px;
+    overflow:hidden;
+    border-bottom:1px solid var(--line);
+  }
+  .slide{
+    position:absolute;inset:0;
+    display:flex;align-items:flex-end;
+    padding:5vw;
+    opacity:0;
+    transition:opacity 0.8s ease;
+  }
+  .slide.active{opacity:1;}
+  .slide::before{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(0deg, rgba(11,11,13,0.92) 0%, rgba(11,11,13,0.15) 60%),
+      var(--bg-grad);
+    z-index:0;
+  }
+  .slide-content{position:relative;z-index:1;max-width:640px;}
+  .slide-tag{
+    display:inline-block;
+    color:var(--ember);
+    font-size:0.8rem;font-weight:600;
+    margin-bottom:8px;
+  }
+  .slide h2{font-size:clamp(1.6rem,4vw,2.6rem);margin-bottom:8px;}
+  .slide p{color:var(--muted);font-size:0.95rem;max-width:480px;}
+
+  .carousel-dots{
+    position:absolute;bottom:18px;right:5vw;z-index:2;
+    display:flex;gap:8px;
+  }
+  .dot{
+    width:26px;height:3px;background:rgba(245,244,246,0.3);
+    cursor:pointer;transition:background 0.3s;
+  }
+  .dot.active{background:var(--ember);}
+  .carousel-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    z-index:2;background:rgba(11,11,13,0.55);
+    border:1px solid var(--line);
+    color:var(--text);width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:1.1rem;
+  }
+  .carousel-arrow.prev{left:16px;}
+  .carousel-arrow.next{right:16px;}
+
+  /* ===== SECTION HEADERS ===== */
+  .section{padding:60px 6vw;}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:28px;flex-wrap:wrap;gap:10px;
+  }
+  .section-head h2{font-size:clamp(1.5rem,3vw,2rem);}
+  .section-head p{color:var(--muted);font-size:0.9rem;}
+
+  /* ===== FILTER ===== */
+  .filters{
+    display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;
+  }
+  .filter-btn{
+    padding:8px 16px;border:1px solid var(--line);
+    background:transparent;color:var(--muted);
+    font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:500;
+    cursor:pointer;transition:all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover{
+    border-color:var(--ember);color:var(--text);
+    background:rgba(255,70,85,0.08);
+  }
+
+  /* ===== PRODUCT GRID ===== */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
+    gap:20px;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    display:flex;flex-direction:column;
+    transition:border-color 0.25s, transform 0.25s;
+  }
+  .card:hover{border-color:var(--blood);transform:translateY(-3px);}
+  .card-img{
+    height:150px;
+    background:linear-gradient(135deg,var(--surface-2),var(--void));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:0.8rem;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .card-game{
+    position:absolute;top:10px;left:10px;
+    background:rgba(11,11,13,0.8);
+    color:var(--ember);font-size:0.7rem;font-weight:600;
+    padding:4px 8px;
+  }
+  .card-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px;}
+  .card-title{font-size:1rem;font-weight:600;}
+  .card-desc{color:var(--muted);font-size:0.82rem;flex:1;}
+  .card-price{
+    color:var(--ember);font-family:'Rajdhani',sans-serif;
+    font-weight:700;font-size:1.25rem;
+  }
+  .card-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--ember);color:#0b0b0d;
+    padding:11px;font-weight:600;font-size:0.88rem;
+    border:none;cursor:pointer;
+    transition:background 0.2s;
+  }
+  .card-btn:hover{background:#ff5c6a;}
+
+  /* ===== FOOTER ===== */
+  footer{
+    border-top:1px solid var(--line);
+    padding:32px 6vw;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+    color:var(--muted);font-size:0.85rem;
+  }
+
+  @media(max-width:640px){
+    .nav{padding:16px 5vw;}
+    .section{padding:44px 5vw;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">DeMartyr<span>Store</span></div>
+  <a href="#produk" class="nav-cta">Lihat Katalog</a>
+</nav>
+
+<!-- ===== BANNER CAROUSEL (5 slides) ===== -->
+<div class="carousel" id="carousel">
+  <div class="slide active" style="--bg-grad:radial-gradient(circle at 30% 30%, #c81e3a33, transparent 60%), #17161a;">
+    <div class="slide-content">
+      <span class="slide-tag">PROMO MINGGU INI</span>
+      <h2>Diskon 15% Semua Akun Mobile Legends</h2>
+      <p>Berlaku sampai akhir minggu. Stok terbatas, cek sebelum kehabisan.</p>
+    </div>
+  </div>
+  <div class="slide" style="--bg-grad:radial-gradient(circle at 70% 40%, #ff465533, transparent 60%), #1f1d22;">
+    <div class="slide-content">
+      <span class="slide-tag">BARU MASUK</span>
+      <h2>Akun Valorant Rank Immortal — Ready Stock</h2>
+      <p>Sudah termasuk skin eksklusif dan full akses email.</p>
+    </div>
+  </div>
+  <div class="slide" style="--bg-grad:radial-gradient(circle at 50% 60%, #c81e3a33, transparent 60%), #17161a;">
+    <div class="slide-content">
+      <span class="slide-tag">GARANSI</span>
+      <h2>Garansi Full Aman & Bisa Ganti Data</h2>
+      <p>Semua akun bergaransi, proses serah terima dibantu sampai selesai.</p>
+    </div>
+  </div>
+  <div class="slide" style="--bg-grad:radial-gradient(circle at 20% 70%, #ff465533, transparent 60%), #1f1d22;">
+    <div class="slide-content">
+      <span class="slide-tag">FLASH SALE</span>
+      <h2>Akun Genshin Impact AR 55+</h2>
+      <p>Karakter dan senjata lengkap, harga spesial hari ini.</p>
+    </div>
+  </div>
+  <div class="slide" style="--bg-grad:radial-gradient(circle at 60% 30%, #c81e3a33, transparent 60%), #17161a;">
+    <div class="slide-content">
+      <span class="slide-tag">TESTIMONI</span>
+      <h2>500+ Transaksi Aman Sejak 2023</h2>
+      <p>Dipercaya komunitas, proses cepat via chat WhatsApp.</p>
+    </div>
+  </div>
+
+  <div class="carousel-arrow prev" onclick="changeSlide(-1)">&#10094;</div>
+  <div class="carousel-arrow next" onclick="changeSlide(1)">&#10095;</div>
+  <div class="carousel-dots" id="dots"></div>
+</div>
+
+<!-- ===== PRODUK ===== -->
+<section class="section" id="produk">
+  <div class="section-head">
+    <h2>Katalog Akun</h2>
+    <p>Klik "Chat WA" untuk pesan langsung, admin balas cepat.</p>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-game="all">Semua</button>
+    <button class="filter-btn" data-game="ML">Mobile Legends</button>
+    <button class="filter-btn" data-game="VAL">Valorant</button>
+    <button class="filter-btn" data-game="GI">Genshin Impact</button>
+    <button class="filter-btn" data-game="FF">Free Fire</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</section>
+
+<footer>
+  <div>DeMartyr Store — Jual beli akun game aman & terpercaya.</div>
+  <div>Kontak admin: 0812-xxxx-xxxx</div>
+</footer>
+
+<script>
+  /* ================================================
+     GANTI NOMOR WA DI SINI (format: kode negara tanpa +, tanpa 0 di depan)
+     Contoh nomor 0812-3456-7890 jadi 6281234567890
+  ================================================= */
+  const WA_NUMBER = "6281234567890";
+
+  /* ================================================
+     DATA PRODUK — tambah/edit/hapus objek di array ini
+     img: taruh url gambar akun (screenshot profil/rank),
+          kalau kosong akan muncul placeholder teks
+  ================================================= */
+  const products = [
+    { game:"ML", title:"Akun ML Mythic Glory 500", desc:"120+ skin, 40 hero, skin epic lengkap.", price:"Rp 350.000", img:"" },
+    { game:"ML", title:"Akun ML Legend Rank", desc:"60 skin, emblem max, 25 hero.", price:"Rp 150.000", img:"" },
+    { game:"VAL", title:"Akun Valorant Immortal 2", desc:"Full skin bundle Reaver, akun aman.", price:"Rp 500.000", img:"" },
+    { game:"VAL", title:"Akun Valorant Diamond", desc:"15 agent unlock, 8 skin premium.", price:"Rp 220.000", img:"" },
+    { game:"GI", title:"Akun Genshin AR 58", desc:"12 karakter 5-star, senjata sig lengkap.", price:"Rp 600.000", img:"" },
+    { game:"GI", title:"Akun Genshin AR 45", desc:"6 karakter 5-star, world quest selesai.", price:"Rp 280.000", img:"" },
+    { game:"FF", title:"Akun FF Grandmaster", desc:"Bundle lengkap, 50+ skin senjata.", price:"Rp 180.000", img:"" },
+    { game:"FF", title:"Akun FF Elite Heroic", desc:"Pet max level, koleksi bundle rare.", price:"Rp 90.000", img:"" },
+  ];
+
+  const grid = document.getElementById("grid");
+
+  function renderProducts(filter){
+    grid.innerHTML = "";
+    products
+      .filter(p => filter === "all" || p.game === filter)
+      .forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const message = encodeURIComponent(`Halo min, saya mau pesan: ${p.title} (${p.price}). Masih ready?`);
+        const waLink = `https://wa.me/${WA_NUMBER}?text=${message}`;
+
+        card.innerHTML = `
+          <div class="card-img">
+            <span class="card-game">${gameLabel(p.game)}</span>
+            ${p.img ? `<img src="${p.img}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">` : "Foto Akun"}
+          </div>
+          <div class="card-body">
+            <div class="card-title">${p.title}</div>
+            <div class="card-desc">${p.desc}</div>
+            <div class="card-price">${p.price}</div>
+            <a class="card-btn" href="${waLink}" target="_blank" rel="noopener">
+              Chat WA — Pesan
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+  }
+
+  function gameLabel(code){
+    const map = { ML:"Mobile Legends", VAL:"Valorant", GI:"Genshin Impact", FF:"Free Fire" };
+    return map[code] || code;
+  }
+
+  document.getElementById("filters").addEventListener("click", (e) => {
+    if(!e.target.classList.contains("filter-btn")) return;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    e.target.classList.add("active");
+    renderProducts(e.target.dataset.game);
+  });
+
+  renderProducts("all");
+
+  /* ===== CAROUSEL LOGIC ===== */
+  const slides = document.querySelectorAll(".slide");
+  const dotsWrap = document.getElementById("dots");
+  let current = 0;
+  let timer;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement("div");
+    dot.className = "dot" + (i === 0 ? " active" : "");
+    dot.onclick = () => goToSlide(i);
+    dotsWrap.appendChild(dot);
+  });
+  const dots = document.querySelectorAll(".dot");
+
+  function goToSlide(i){
+    slides[current].classList.remove("active");
+    dots[current].classList.remove("active");
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add("active");
+    dots[current].classList.add("active");
+    resetTimer();
+  }
+  function changeSlide(dir){ goToSlide(current + dir); }
+  function resetTimer(){
+    clearInterval(timer);
+    timer = setInterval(() => changeSlide(1), 5000);
+  }
+  resetTimer();
+</script>
+
+</body>
+</html>
